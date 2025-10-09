@@ -21,31 +21,39 @@
 # SOFTWARE.
 
 ROOT = ../../
+ARCH := $(shell uname -m)
+
+ifeq ($(ARCH),riscv64)
+    DOCKERFILE := riscv.Dockerfile
+else
+    DOCKERFILE := Dockerfile
+endif
+
 FUNCTIONS = compression-python init-database
 ALL_IMAGES = $(FUNCTIONS)
 
 all-image: $(ALL_IMAGES)
 
-compression-python: Dockerfile python/server.py python/requirements.txt files/metamorphosis.txt
+compression-python: $(DOCKERFILE) python/server.py python/requirements.txt files/metamorphosis.txt
 	DOCKER_BUILDKIT=1 docker build \
-	--tag vhiveease/compression-python:latest \
+	--tag pourpourr/compression-python:latest \
 	--target compressionPython \
-	-f ./Dockerfile \
+	-f ./$(DOCKERFILE) \
 	$(ROOT) --load
 
-init-database: Dockerfile init/init-database.go files/metamorphosis.txt
+init-database: $(DOCKERFILE) init/init-database.go files/metamorphosis.txt
 	DOCKER_BUILDKIT=1 docker build \
-	--tag vhiveease/compression-init-database:latest \
+	--tag pourpourr/compression-init-database:latest \
 	--target databaseInit \
-	-f ./Dockerfile \
+	-f ./$(DOCKERFILE) \
 	$(ROOT) --load
 
 ## Push images
 push:
-	docker push docker.io/vhiveease/compression-python:latest 
-	docker push docker.io/vhiveease/compression-init-database:latest
+	docker push docker.io/pourpourr/compression-python:latest 
+	docker push docker.io/pourpourr/compression-init-database:latest
 
 ## Pull images from docker hub
 pull:
-	docker pull docker.io/vhiveease/compression-python:latest
-	docker pull docker.io/vhiveease/compression-init-database:latest
+	docker pull docker.io/pourpourr/compression-python:latest
+	docker pull docker.io/pourpourr/compression-init-database:latest

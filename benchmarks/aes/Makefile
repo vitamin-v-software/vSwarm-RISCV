@@ -26,6 +26,14 @@ clean: clean-proto
 
 ROOT = ../../
 
+ARCH := $(shell uname -m)
+
+ifeq ($(ARCH),riscv64)
+    DOCKERFILE := docker/riscv.Dockerfile
+else
+    DOCKERFILE := docker/Dockerfile
+endif
+
 FUNCTIONS = aes-python aes-nodejs aes-go
 ALL_IMAGES = $(addsuffix -image, $(FUNCTIONS))
 ALL_LAMBDA_IMAGES = $(addsuffix -lambda-image, $(FUNCTIONS))
@@ -41,27 +49,29 @@ all-image: $(ALL_IMAGES)
 
 all-lambda-image: $(ALL_LAMBDA_IMAGES)
 
-aes-python-image: docker/Dockerfile python/server.py
+
+
+aes-python-image: $(DOCKERFILE) python/server.py
 	DOCKER_BUILDKIT=1 docker buildx build \
-	--tag vhiveease/aes-python:latest \
+	--tag pourpourr/aes-python:latest \
 	--target aesPython \
-	-f docker/Dockerfile \
+	-f $(DOCKERFILE) \
 	$(ROOT) --load
 
 
-aes-nodejs-image: docker/Dockerfile nodejs/server.js
+aes-nodejs-image: $(DOCKERFILE) nodejs/server.js
 	DOCKER_BUILDKIT=1 docker buildx build --progress=plain \
-	--tag vhiveease/aes-nodejs:latest \
+	--tag pourpourr/aes-nodejs:latest \
 	--target aesNodeJS \
-	-f docker/Dockerfile \
+	-f $(DOCKERFILE) \
 	$(ROOT) --load
 
 
-aes-go-image: docker/Dockerfile go/server.go
+aes-go-image: $(DOCKERFILE) go/server.go
 	DOCKER_BUILDKIT=1 docker buildx build \
-	--tag vhiveease/aes-go:latest \
+	--tag pourpourr/aes-go:latest \
 	--target aesGo \
-	-f docker/Dockerfile \
+	-f $(DOCKERFILE) \
 	$(ROOT) --load
 
 
@@ -91,7 +101,7 @@ aes-go-lambda-image: docker/Dockerfile.Lambda go/server.go
 ## Push images
 
 push-%: %-image
-	docker push docker.io/vhiveease/$(subst push-,,$@):latest
+	docker push docker.io/pourpourr/$(subst push-,,$@):latest
 
 push-%-lambda: %-lambda-image
 	aws ecr get-login-password --region $(AWS_REGION) | \
@@ -105,7 +115,7 @@ push: $(addprefix push-, $(FUNCTIONS)) $(addprefix push-, $(addsuffix -lambda, $
 ## Pull images from docker hub
 
 pull-%:
-	docker pull docker.io/vhiveease/$(subst pull-,,$@):latest
+	docker pull docker.io/pourpourr/$(subst pull-,,$@):latest
 
 pull-%-lambda:
 	docker pull $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(subst pull-,,$@):latest

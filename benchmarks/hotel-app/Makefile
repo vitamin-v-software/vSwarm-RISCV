@@ -26,6 +26,15 @@ clean: clean-proto
 
 ROOT = ../../
 
+
+ARCH := $(shell uname -m)
+
+ifeq ($(ARCH),riscv64)
+    DOCKERFILE := riscv.Dockerfile
+else
+    DOCKERFILE := Dockerfile
+endif
+
 .PHONY: geo profile rate recommendation reservation user search
 
 FUNCTIONS = geo profile rate recommendation reservation user search
@@ -37,26 +46,26 @@ all-image: $(ALL_IMAGES)
 
 
 
-%-image: Dockerfile go.mod %/*
+%-image: $(DOCKERFILE) go.mod %/*
 	$(eval func := $(subst -image,,$@))
 	DOCKER_BUILDKIT=1 \
 	docker build \
-	--tag vhiveease/hotel-app-$(func):latest \
+	--tag pourpourr/hotel-app-$(func):latest \
 	--build-arg SERVICE=$(func) \
-	-f Dockerfile \
+	-f $(DOCKERFILE) \
 	$(ROOT)
 
 
 
 ## Push images
 push-%: %-image
-	docker push docker.io/vhiveease/hotel-app-$(subst push-,,$@):latest
+	docker push docker.io/pourpourr/hotel-app-$(subst push-,,$@):latest
 
 push: $(addprefix push-, $(FUNCTIONS))
 
 ## Pull images from docker hub
 pull-%:
-	docker pull docker.io/vhiveease/hotel-app-$(subst push-,,$@):latest
+	docker pull docker.io/pourpourr/hotel-app-$(subst push-,,$@):latest
 
 pull: $(addprefix pull-, $(FUNCTIONS))
 

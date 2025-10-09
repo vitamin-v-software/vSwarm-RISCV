@@ -25,6 +25,13 @@
 
 IMAGES 	  ?= golang-builder golang python-slim node-slim mongodb memcached
 
+ARCH := $(shell uname -m)
+
+ifeq ($(ARCH),riscv64)
+    DOCKERFILE := riscv.Dockerfile
+else
+    DOCKERFILE := Dockerfile
+endif
 
 #### Build the base images
 %: Dockerfile

@@ -26,28 +26,37 @@ clean: clean-proto
 
 ROOT = ../../
 
+
+ARCH := $(shell uname -m)
+
+ifeq ($(ARCH),riscv64)
+    DOCKERFILE := docker/riscv.Dockerfile
+else
+    DOCKERFILE := docker/Dockerfile
+endif
+
 FUNCTIONS = sleeping-go
 ALL_IMAGES = $(addsuffix -image, $(FUNCTIONS))
 
 all: $(ALL_IMAGES)
 
-sleeping-go-image: docker/Dockerfile go/server.go
+sleeping-go-image: $(DOCKERFILE)  go/server.go
 	DOCKER_BUILDKIT=1 docker buildx build \
-	--tag vhiveease/sleeping-go:latest \
+	--tag pourpourr/sleeping-go:latest \
 	--target sleepingGo \
-	-f docker/Dockerfile \
+	-f $(DOCKERFILE)  \
 	$(ROOT) --load
 
 ## Push images
 
 push-%: %-image
-	docker push docker.io/vhiveease/$(subst push-,,$@):latest
+	docker push docker.io/pourpourr/$(subst push-,,$@):latest
 
 push: $(addprefix push-, $(FUNCTIONS))
 
 ## Pull images from docker hub
 
 pull-%:
-	docker pull docker.io/vhiveease/$(subst pull-,,$@):latest
+	docker pull docker.io/pourpourr/$(subst pull-,,$@):latest
 
 pull: $(addprefix pull-, $(FUNCTIONS))
