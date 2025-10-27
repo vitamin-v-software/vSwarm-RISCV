@@ -30,7 +30,7 @@ else
 endif
 all-image: rnn-serving-python
 
-rnn-serving-python: $(DOCKERFILE) python/server.py python/rnn.py python/requirements.txt model/rnn_model.pth
+rnn-serving-python: $(DOCKERFILE) python/riscv-server.py python/rnn.py python/riscv-requirements.txt model/rnn_model.pth
 	DOCKER_BUILDKIT=1 docker build \
 	--tag pourpourr/rnn-serving-python:latest \
 	--target rnnServingPython \

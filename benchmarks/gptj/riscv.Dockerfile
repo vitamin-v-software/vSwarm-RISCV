@@ -37,3 +37,63 @@ RUN cd /tmp/ \
     && rm -rf /tmp/third_party
 
 WORKDIR /resources
+
+# FROM pourpourr/gptj-python:latest_temp
+
+
+RUN git clone https://github.com/apache/arrow.git
+WORKDIR /resources/arrow
+RUN git checkout apache-arrow-21.0.0
+
+RUN mkdir /resources/arrow/cpp/build
+WORKDIR /resources/arrow/cpp/build
+
+RUN cmake .. \
+  -DCMAKE_INSTALL_PREFIX=/usr/local \
+  -DARROW_BUILD_SHARED=ON \
+  -DARROW_PYTHON=ON \
+  -DARROW_PARQUET=ON \
+  -DARROW_COMPUTE=ON \
+  -DARROW_DATASET=ON \
+  -DARROW_IPC=ON \
+  -DARROW_CSV=ON \
+  -DARROW_JSON=ON \
+  -DARROW_WITH_RE2=ON \
+  -DARROW_WITH_UTF8PROC=OFF \
+  -DARROW_FLIGHT=OFF \
+  -DARROW_GANDIVA=OFF \
+  -DARROW_HDFS=OFF \
+  -DARROW_ORC=OFF \
+  -GNinja
+
+RUN ninja -j$(nproc)
+
+RUN ninja install
+
+# ################################################333
+WORKDIR /resources/arrow/python
+
+RUN pip install --user  --break-system-packages -r requirements-build.txt cython 
+
+RUN rm -rf build/ pyarrow/*.so
+
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+# RUN python setup.py build_ext --inplace
+RUN pip install --user  --break-system-packages -e .
+
+
+WORKDIR /workspace
+
+COPY ./benchmarks/gptj/python /workspace/python
+
+WORKDIR /workspace/python
+
+RUN cd /tmp/ \
+    && git clone https://github.com/vhive-serverless/vSwarm-proto.git \
+    && cd /tmp/vSwarm-proto \
+    && git checkout feature/gptj \
+    && mv /tmp/vSwarm-proto/proto/gptj/* /workspace/python
+
+RUN python3 main_process.py    
+ENTRYPOINT [ "python3", "server.py",  "--dataset-path=./data/cnn_eval.json", "--mlperf_conf=./config/mlperf.conf", "--user_conf=./config/user.conf"]

@@ -98,7 +98,7 @@ download_model:
 
 bert-python-riscv-image: docker/riscv.Dockerfile python/server.py
 	DOCKER_BUILDKIT=1 docker buildx build \
-	--tag $(DOCKER_HUB_ACCOUNT)/bert-python:latest_temp \
+	--tag $(DOCKER_HUB_ACCOUNT)/bert-python:latest \
 	-f docker/riscv.Dockerfile \
 	$(ROOT) --load		
 # else

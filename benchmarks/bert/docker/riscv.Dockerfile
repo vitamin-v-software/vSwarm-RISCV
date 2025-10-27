@@ -25,3 +25,20 @@ RUN cd /tmp/ \
     && cd /tmp \
     && rm -rf /tmp/loadgen \
     && rm -rf /tmp/third_party
+
+
+# FROM pourpourr/bert-python:latest_temp
+
+
+COPY ./benchmarks/bert/python /workspace/python
+
+COPY ./benchmarks/bert/build/ /workspace/python/build/
+# RUN mv /workspace/python/config/bert_config.json /workspace/ && mv /workspace/python/config/user.conf /workspace/
+ADD https://raw.githubusercontent.com/vhive-serverless/vSwarm-proto/add-bert/proto/bert/bert_pb2_grpc.py /workspace/python
+ADD https://raw.githubusercontent.com/vhive-serverless/vSwarm-proto/add-bert/proto/bert/bert_pb2.py /workspace/python/proto/bert/
+ENV PATH=/root/.local/bin:$PATH
+WORKDIR /workspace/python 
+RUN mv config/* .
+
+
+ENTRYPOINT [ "python3", "server.py" ,"--addr=0.0.0.0", "--port=50051","--mlperf_conf=./config/user.conf","--user_conf=./config/user.conf"]
