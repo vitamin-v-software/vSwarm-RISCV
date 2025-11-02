@@ -53,7 +53,7 @@ ENTRYPOINT [ "python", "/app/server.py" ]
 
 #---------- GoLang -----------#
 # First stage (Builder):
-FROM  --platform=riscv64  pourpourr/go-base:1.21-riscv64 AS aesGoBuilder 
+FROM  --platform=riscv64  caldiuoa/go-base:1.21-riscv64 AS aesGoBuilder 
 USER root
 WORKDIR /app/app/
 RUN  apk add git ca-certificates

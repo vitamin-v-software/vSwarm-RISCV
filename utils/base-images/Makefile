@@ -23,10 +23,13 @@
 
 .PHONY: all
 
-IMAGES 	  ?= golang-builder golang python-slim node-slim mongodb memcached
+IMAGES 	  ?= golang-builder golang python-slim node-slim mongodb memcached go-alpine-base
+
+
+DOCKER_HUB_ACCOUNT=caldiuoa
+
 
 ARCH := $(shell uname -m)
-
 ifeq ($(ARCH),riscv64)
     DOCKERFILE := riscv.Dockerfile
 else
@@ -34,13 +37,23 @@ else
 endif
 
 #### Build the base images
-%: Dockerfile
+# %: Dockerfile
+# 	DOCKER_BUILDKIT=1 docker build \
+# 	--tag docker.io/vhiveease/$@:latest \
+# 	--target $@ \
+# 	-f Dockerfile \
+# 	.
+
+go-alpine-base : riscv.Dockerfile
 	DOCKER_BUILDKIT=1 docker build \
-	--tag docker.io/vhiveease/$@:latest \
+	--tag docker.io/$(DOCKER_HUB_ACCOUNT)/go-base:1.21-riscv64 \
 	--target $@ \
-	-f Dockerfile \
+	-f riscv.Dockerfile \
 	.
 
+push-go-alpine-base : go-alpine-base 
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/go-base:1.21-riscv64 
 
 all: $(IMAGES)
+
 

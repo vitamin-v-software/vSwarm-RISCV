@@ -22,8 +22,17 @@
 
 
 ROOT = ../../
+DOCKER_HUB_ACCOUNT=caldiuoa
 
 all: relay relay-docker
+
+ARCH := $(shell uname -m)
+
+ifeq ($(ARCH),riscv64)
+    DOCKERFILE := riscv.Dockerfile
+else
+    DOCKERFILE := Dockerfile
+endif
 
 relay:
 	go mod tidy
@@ -32,15 +41,15 @@ relay:
 relay-docker:
 	DOCKER_BUILDKIT=1 \
 	docker build \
-	--tag vhiveease/relay:latest \
+	--tag $(DOCKER_HUB_ACCOUNT)/relay:latest \
 	--target relay \
-	-f Dockerfile \
+	-f $(DOCKERFILE)  \
 	$(ROOT)
 
 ## Push images
 push:
-	docker push docker.io/vhiveease/relay:latest
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/relay:latest
 
 ## Pull images from docker hub
 pull:
-	docker pull docker.io/vhiveease/relay:latest
+	docker pull docker.io/$(DOCKER_HUB_ACCOUNT)/relay:latest

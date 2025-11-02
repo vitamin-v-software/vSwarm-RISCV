@@ -20,26 +20,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# First stage (Builder):
-FROM  --platform=riscv64  caldiuoa/go-base:1.21-riscv64 AS relayBuilder
-USER root
-WORKDIR /app/app/
-RUN  apk add git ca-certificates
+version: "3.9"
+services:
+  aes-go:
+    image: caldiuoa/aes-go:latest
+    container_name: aes-go
+    entrypoint:
+      - /app/server
+      - --addr=0.0.0.0:50051
+    ports:
+      - target: 50051
 
-COPY ./tools/relay/riscv-server.go ./tools/relay/server.go
-COPY ./tools/relay/go-riscv.mod ./tools/relay/go.mod
-COPY ./tools/relay/go-riscv.sum ./tools/relay/go.sum
-
-WORKDIR /app/app/tools/relay
-RUN git clone https://github.com/giorgospour/vSwarm-proto-RISCV.git
-RUN go mod tidy
-RUN go get github.com/vhive-serverless/vSwarm/tools/relay 
-RUN CGO_ENABLED=0 GOARCH=riscv64 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o ./server github.com/vhive-serverless/vSwarm/tools/relay
-
-# Second stage (Runner):
-FROM scratch as relay
-WORKDIR /app/
-COPY --from=relayBuilder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=relayBuilder /app/app/tools/relay/server .
-
-ENTRYPOINT [ "/app/server" ]
+  relay:
+    image: caldiuoa/relay:latest
+    entrypoint:
+      - /app/server
+      - --addr=0.0.0.0:50000
+      - --function-endpoint-url=aes-go
+      - --function-endpoint-port=50051
+      - --function-name=aes-go
+    ports:
+        - published: 50000
+          target: 50000

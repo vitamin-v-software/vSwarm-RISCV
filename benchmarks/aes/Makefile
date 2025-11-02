@@ -23,6 +23,7 @@
 
 clean: clean-proto
 
+DOCKER_HUB_ACCOUNT=caldiuoa
 
 ROOT = ../../
 
@@ -53,7 +54,7 @@ all-lambda-image: $(ALL_LAMBDA_IMAGES)
 
 aes-python-image: $(DOCKERFILE) python/server.py
 	DOCKER_BUILDKIT=1 docker buildx build \
-	--tag pourpourr/aes-python:latest \
+	--tag $(DOCKER_HUB_ACCOUNT)/aes-python:latest \
 	--target aesPython \
 	-f $(DOCKERFILE) \
 	$(ROOT) --load
@@ -61,7 +62,7 @@ aes-python-image: $(DOCKERFILE) python/server.py
 
 aes-nodejs-image: $(DOCKERFILE) nodejs/server.js
 	DOCKER_BUILDKIT=1 docker buildx build --progress=plain \
-	--tag pourpourr/aes-nodejs:latest \
+	--tag $(DOCKER_HUB_ACCOUNT)/aes-nodejs:latest \
 	--target aesNodeJS \
 	-f $(DOCKERFILE) \
 	$(ROOT) --load
@@ -69,7 +70,7 @@ aes-nodejs-image: $(DOCKERFILE) nodejs/server.js
 
 aes-go-image: $(DOCKERFILE) go/server.go
 	DOCKER_BUILDKIT=1 docker buildx build \
-	--tag pourpourr/aes-go:latest \
+	--tag $(DOCKER_HUB_ACCOUNT)/aes-go:latest \
 	--target aesGo \
 	-f $(DOCKERFILE) \
 	$(ROOT) --load
@@ -101,7 +102,7 @@ aes-go-lambda-image: docker/Dockerfile.Lambda go/server.go
 ## Push images
 
 push-%: %-image
-	docker push docker.io/pourpourr/$(subst push-,,$@):latest
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/$(subst push-,,$@):latest
 
 push-%-lambda: %-lambda-image
 	aws ecr get-login-password --region $(AWS_REGION) | \
@@ -115,7 +116,7 @@ push: $(addprefix push-, $(FUNCTIONS)) $(addprefix push-, $(addsuffix -lambda, $
 ## Pull images from docker hub
 
 pull-%:
-	docker pull docker.io/pourpourr/$(subst pull-,,$@):latest
+	docker pull docker.io/$(DOCKER_HUB_ACCOUNT)/$(subst pull-,,$@):latest
 
 pull-%-lambda:
 	docker pull $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(subst pull-,,$@):latest
