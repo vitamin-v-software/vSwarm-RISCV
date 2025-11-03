@@ -1,4 +1,4 @@
-FROM pourpourr/debian-base:trixie
+FROM caldiuoa/debian-base:trixie
 # apt install -y python3-torch python3-numpy  python3-pip
 
 # pip install --user --break-system-packages grpcio google protobuf accelerate grpcio-reflection transformers six setuptools pyyaml  --index-url https://gitlab.com/api/v4/projects/56254198/packages/pypi/simple
@@ -38,7 +38,7 @@ RUN cd /tmp/ \
 
 WORKDIR /resources
 
-# FROM pourpourr/gptj-python:latest_temp
+# FROM caldiuoa/gptj-python:latest_temp
 
 
 RUN git clone https://github.com/apache/arrow.git
@@ -97,3 +97,4 @@ RUN cd /tmp/ \
 
 RUN python3 main_process.py    
 ENTRYPOINT [ "python3", "server.py",  "--dataset-path=./data/cnn_eval.json", "--mlperf_conf=./config/mlperf.conf", "--user_conf=./config/user.conf"]
+

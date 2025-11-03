@@ -25,9 +25,9 @@
 # # Install gRPC and all other dependencies
 
 
-# docker build    --tag pourpourr/aes-python:riscv64_noble   --target aesPython   -f ./docker/Dockerfile   ../../
-# docker push pourpourr/aes-python:riscv64_noble
-FROM --platform=riscv64   pourpourr/python-base:3.10-grpc-only-1.71 as aesPythonBuilder
+# docker build    --tag caldiuoa/aes-python:riscv64_noble   --target aesPython   -f ./docker/Dockerfile   ../../
+# docker push caldiuoa/aes-python:riscv64_noble
+FROM --platform=riscv64   caldiuoa/python-base:3.10-grpc-only-1.71 as aesPythonBuilder
 
 WORKDIR /py
 COPY ./benchmarks/aes/python/requirements/requirements-riscv.txt ./requirements.txt
@@ -39,7 +39,7 @@ ADD https://raw.githubusercontent.com/vhive-serverless/vSwarm-proto/v0.3.0/proto
 ADD https://raw.githubusercontent.com/vhive-serverless/vSwarm-proto/v0.3.0/proto/aes/aes_pb2.py ./proto/aes/
 
 # # Second stage (Runner):
-FROM --platform=riscv64 pourpourr/python-base:3.10-runner as aesPython
+FROM --platform=riscv64 caldiuoa/python-base:3.10-runner as aesPython
 # FROM cartesi/python:3.12-slim-noble  as aesPython
 COPY --from=aesPythonBuilder /root/.local /root/.local
 COPY --from=aesPythonBuilder /py /app
@@ -78,7 +78,7 @@ ENTRYPOINT [ "/app/server" ]
 
 #---------- NodeJS -----------#
 # First stage (Builder):
-FROM pourpourr/node-base:jammy-builder AS aesNodeJSBuild
+FROM caldiuoa/node-base:jammy-builder AS aesNodeJSBuild
 WORKDIR /app/
 
 COPY ./utils/tracing/nodejs ./utils/tracing/nodejs
@@ -90,7 +90,7 @@ COPY ./benchmarks/aes/nodejs/server.js ./
 ADD https://raw.githubusercontent.com/vhive-serverless/vSwarm-proto/v0.3.0/proto/aes/aes.proto ./
 
 # Second stage (Runner):
-FROM pourpourr/node-base:alpine-runner AS aesNodeJS
+FROM caldiuoa/node-base:alpine-runner AS aesNodeJS
 WORKDIR /app/
 COPY --from=aesNodeJSBuild /app/ .
 

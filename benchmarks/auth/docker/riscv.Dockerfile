@@ -24,9 +24,9 @@
 #---------- PYTHON -----------#
 ## First stage (Builder):
 ## Install gRPC and all other dependencies
-# docker build    --tag pourpourr/auth-python:riscv64_noble   --target authPython   -f ./Dockerfile   ../../
-# docker push pourpourr/auth-python:riscv64_noble
-FROM --platform=riscv64   pourpourr/python-base:3.10-grpc-only-1.71 as authPythonBuilder
+# docker build    --tag caldiuoa/auth-python:riscv64_noble   --target authPython   -f ./Dockerfile   ../../
+# docker push caldiuoa/auth-python:riscv64_noble
+FROM --platform=riscv64   caldiuoa/python-base:3.10-grpc-only-1.71 as authPythonBuilder
 
 WORKDIR /py
 COPY ./benchmarks/auth/python/requirements/requirements-riscv.txt ./requirements.txt
@@ -39,7 +39,7 @@ ADD https://raw.githubusercontent.com/vhive-serverless/vSwarm-proto/v0.3.0/proto
 ADD https://raw.githubusercontent.com/vhive-serverless/vSwarm-proto/v0.3.0/proto/auth/auth_pb2.py ./proto/auth/
 
 # Second stage (Runner):
-FROM --platform=riscv64 pourpourr/python-base:3.10-runner as authPython
+FROM --platform=riscv64 caldiuoa/python-base:3.10-runner as authPython
 COPY --from=authPythonBuilder /root/.local /root/.local
 COPY --from=authPythonBuilder /py /app
 COPY --from=authPythonBuilder /usr/lib/riscv64-linux-gnu/libatomic.so* /usr/lib/riscv64-linux-gnu/
@@ -56,7 +56,7 @@ ENTRYPOINT [ "python", "/app/server.py" ]
 
 #---------- GoLang -----------#
 ## First stage (Builder):
-FROM  --platform=riscv64  pourpourr/go-base:1.21-riscv64  AS authGoBuilder
+FROM  --platform=riscv64  caldiuoa/go-base:1.21-riscv64  AS authGoBuilder
 USER root
 WORKDIR /app/app/
 RUN  apk add git ca-certificates
@@ -82,7 +82,7 @@ ENTRYPOINT [ "/app/server" ]
 
 #---------- NodeJS -----------#
 # First stage (Builder):
-FROM pourpourr/node-base:jammy-builder AS authNodeJSBuild
+FROM caldiuoa/node-base:jammy-builder AS authNodeJSBuild
 WORKDIR /app/
 
 COPY ./utils/tracing/nodejs ./utils/tracing/nodejs
@@ -94,7 +94,7 @@ ADD https://raw.githubusercontent.com/vhive-serverless/vSwarm-proto/v0.3.0/proto
 
 
 # Second stage (Runner):
-FROM pourpourr/node-base:alpine-runner AS authNodeJS
+FROM caldiuoa/node-base:alpine-runner AS authNodeJS
 WORKDIR /app/
 COPY --from=authNodeJSBuild /app/ .
 

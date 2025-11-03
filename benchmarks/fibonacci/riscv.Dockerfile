@@ -22,11 +22,11 @@
 
 # First stage (Builder):
 
-# FROM pourpourr/python-base:grpc_grpc-tools-1.66.0  as fibonacciPythonBuilder
+# FROM caldiuoa/python-base:grpc_grpc-tools-1.66.0  as fibonacciPythonBuilder
 
-# docker build    --tag pourpourr/fibonacci-python:riscv64_noble   --target fibonacciPython   -f ./Dockerfile   ../../
-# FROM pourpourr/python-riscv64-alpine-base:grpc_grpc-tools-1.71.0 as fibonacciPythonBuilder
-FROM --platform=riscv64   pourpourr/python-base:3.10-grpc-only-1.71 as fibonacciPythonBuilder
+# docker build    --tag caldiuoa/fibonacci-python:riscv64_noble   --target fibonacciPython   -f ./Dockerfile   ../../
+# FROM caldiuoa/python-riscv64-alpine-base:grpc_grpc-tools-1.71.0 as fibonacciPythonBuilder
+FROM --platform=riscv64   caldiuoa/python-base:3.10-grpc-only-1.71 as fibonacciPythonBuilder
 WORKDIR /py
 COPY ./benchmarks/fibonacci/python/requirements-riscv.txt requirements.txt
 RUN pip3 install --user -r requirements.txt
@@ -39,7 +39,7 @@ ADD https://raw.githubusercontent.com/vhive-serverless/vSwarm-proto/v0.3.0/proto
 ADD https://raw.githubusercontent.com/vhive-serverless/vSwarm-proto/v0.3.0/proto/fibonacci/fibonacci_pb2.py ./proto/fibonacci/
 
 # Second stage (Runner):
-FROM --platform=riscv64 pourpourr/python-base:3.10-runner as fibonacciPython
+FROM --platform=riscv64 caldiuoa/python-base:3.10-runner as fibonacciPython
 COPY --from=fibonacciPythonBuilder /root/.local /root/.local
 COPY --from=fibonacciPythonBuilder /py /app
 COPY --from=fibonacciPythonBuilder /usr/lib/riscv64-linux-gnu/libatomic.so* /usr/lib/riscv64-linux-gnu/
@@ -61,7 +61,7 @@ ENTRYPOINT [ "python", "/app/server.py" ]
 ###############GO
 
 
-FROM  --platform=riscv64  pourpourr/go-base:1.21-riscv64  AS fibonacciGoBuilder
+FROM  --platform=riscv64  caldiuoa/go-base:1.21-riscv64  AS fibonacciGoBuilder
 USER root
 WORKDIR /app/app/
 RUN  apk add git ca-certificates
@@ -84,7 +84,7 @@ ENTRYPOINT [ "/app/server" ]
 
 ############NODEJS
 
-FROM pourpourr/node-base:jammy-builder AS fibonacciNodeJSBuild
+FROM caldiuoa/node-base:jammy-builder AS fibonacciNodeJSBuild
 WORKDIR /app/
 
 COPY ./utils/tracing/nodejs ./utils/tracing/nodejs
@@ -95,7 +95,7 @@ RUN npm set progress=false && npm config set depth 0
 RUN npm install --only=production
 
 # Second stage (Runner):
-FROM pourpourr/node-base:alpine-runner AS fibonacciNodeJS
+FROM caldiuoa/node-base:alpine-runner AS fibonacciNodeJS
 WORKDIR /app/
 COPY --from=fibonacciNodeJSBuild /app/ .
 

@@ -23,7 +23,9 @@
 
 .PHONY: all
 
-IMAGES 	  ?= golang-builder golang python-slim node-slim mongodb memcached go-alpine-base
+IMAGES 	  ?= golang-builder golang python-slim node-slim mongodb memcached go-alpine-base \
+python3.10-grpc-only-1.71 python3.10-runner node-jammy-base node-alpine-runner \
+python-debian-base-grpc-only debian-trixie
 
 
 DOCKER_HUB_ACCOUNT=caldiuoa
@@ -36,13 +38,27 @@ else
     DOCKERFILE := Dockerfile
 endif
 
-#### Build the base images
-# %: Dockerfile
-# 	DOCKER_BUILDKIT=1 docker build \
-# 	--tag docker.io/vhiveease/$@:latest \
-# 	--target $@ \
-# 	-f Dockerfile \
-# 	.
+
+python3.10-grpc-only-1.71 : riscv.Dockerfile
+	DOCKER_BUILDKIT=1 docker build \
+	--tag docker.io/$(DOCKER_HUB_ACCOUNT)/python-base:3.10-grpc-only-1.71 \
+	--target $@ \
+	-f riscv.Dockerfile \
+	.
+
+push-python3.10-grpc-only-1.71 : python3.10-grpc-only-1.71
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/python-base:3.10-grpc-only-1.71
+
+python3.10-runner : riscv.Dockerfile
+	DOCKER_BUILDKIT=1 docker build \
+	--tag docker.io/$(DOCKER_HUB_ACCOUNT)/python-base:3.10-runner \
+	--target $@ \
+	-f riscv.Dockerfile \
+	.
+
+push-python3.10-runner: python3.10-runner
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/python-base:3.10-runner 
+
 
 go-alpine-base : riscv.Dockerfile
 	DOCKER_BUILDKIT=1 docker build \
@@ -54,6 +70,57 @@ go-alpine-base : riscv.Dockerfile
 push-go-alpine-base : go-alpine-base 
 	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/go-base:1.21-riscv64 
 
+node-jammy-base : riscv.Dockerfile
+	DOCKER_BUILDKIT=1 docker build \
+	--tag docker.io/$(DOCKER_HUB_ACCOUNT)/node-base:jammy-builder  \
+	--target $@ \
+	-f riscv.Dockerfile \
+	.
+
+push-node-jammy-base : node-jammy-base
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/node-base:jammy-builder
+
+node-alpine-runner : riscv.Dockerfile
+	DOCKER_BUILDKIT=1 docker build \
+	--tag docker.io/$(DOCKER_HUB_ACCOUNT)/node-base:alpine-runner  \
+	--target $@ \
+	-f riscv.Dockerfile \
+	.
+
+push-node-alpine-runner : node-alpine-runner
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/node-base:alpine-runner
+
+python-debian-base-grpc-only : riscv.Dockerfile
+	DOCKER_BUILDKIT=1 docker build \
+	--tag docker.io/$(DOCKER_HUB_ACCOUNT)/python-base:debian_grpc_only_riscv64  \
+	--target $@ \
+	-f riscv.Dockerfile \
+	.
+
+push-python-debian-base-grpc-only : python-debian-base-grpc-only
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/python-base:debian_grpc_only_riscv64
+
+
+debian-trixie : riscv.Dockerfile
+	DOCKER_BUILDKIT=1 docker build \
+	--tag docker.io/$(DOCKER_HUB_ACCOUNT)/debian-base:trixie  \
+	--target $@ \
+	-f riscv.Dockerfile \
+	.
+
+push-debian-trixie : debian-trixie
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/debian-base:trixie
+
+cassandra :
+	docker build -f ./cassandra/Dockerfile ./cassandra/ --tag $(DOCKER_HUB_ACCOUNT)/cassandra:latest
+
+
+push-cassandra : cassandra
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/cassandra:latest
+
+
 all: $(IMAGES)
 
 
+
+# docker build -f ./Dockerfile . --tag pourpourr/cassandra:latest
