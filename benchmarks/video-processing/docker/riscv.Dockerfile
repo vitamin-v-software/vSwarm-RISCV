@@ -22,7 +22,7 @@
 
 #---------- Init-Database -----------#
 # First stage (Builder):
-FROM  --platform=riscv64  pourpourr/go-base:1.21-riscv64 AS databaseInitBuilder
+FROM  --platform=riscv64  caldiuoa/go-base:1.21-riscv64 AS databaseInitBuilder
 WORKDIR /app/app/
 USER root
 RUN apk add --no-cache ca-certificates git
@@ -57,7 +57,7 @@ ENTRYPOINT [ "/app/init-database" ]
 # RUN pip3 install --user -r requirements.txt
 
 # Second stage (Runner):
-FROM pourpourr/python-base:debian_grpcio_tools_riscv64  as videoProcessingPython
+FROM caldiuoa/python-base:debian_grpcio_tools_riscv64  as videoProcessingPython
 WORKDIR /app
 
 RUN apt update && apt install -y python3-cassandra python3-opencv

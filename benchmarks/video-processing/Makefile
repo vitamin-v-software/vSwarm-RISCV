@@ -24,7 +24,7 @@ ROOT = ../../
 
 
 ARCH := $(shell uname -m)
-
+DOCKER_HUB_ACCOUNT=caldiuoa
 ifeq ($(ARCH),riscv64)
     DOCKERFILE := docker/riscv.Dockerfile
 else
@@ -34,24 +34,24 @@ all-image: video-processing-python init-database
 
 video-processing-python: $(DOCKERFILE)  python/server.py python/requirements.txt videos/default.mp4
 	DOCKER_BUILDKIT=1 docker build \
-	--tag pourpourr/video-processing-python:latest \
+	--tag $(DOCKER_HUB_ACCOUNT)/video-processing-python:latest \
 	--target videoProcessingPython \
 	-f $(DOCKERFILE)  \
 	$(ROOT) --load
 
 init-database: $(DOCKERFILE)  init/init-database.go videos/default.mp4
 	DOCKER_BUILDKIT=1 docker build \
-	--tag pourpourr/video-processing-init-database:latest \
+	--tag $(DOCKER_HUB_ACCOUNT)/video-processing-init-database:latest \
 	--target databaseInit \
 	-f $(DOCKERFILE)  \
 	$(ROOT) --load
 
 ## Push images
 push:
-	docker push docker.io/pourpourr/video-processing-python:latest 
-	docker push docker.io/pourpourr/video-processing-init-database:latest
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/video-processing-python:latest 
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/video-processing-init-database:latest
 
 ## Pull images from docker hub
 pull:
-	docker pull docker.io/pourpourr/video-processing-python:latest
-	docker pull docker.io/pourpourr/video-processing-init-database:latest
+	docker pull docker.io/$(DOCKER_HUB_ACCOUNT)/video-processing-python:latest
+	docker pull docker.io/$(DOCKER_HUB_ACCOUNT)/video-processing-init-database:latest

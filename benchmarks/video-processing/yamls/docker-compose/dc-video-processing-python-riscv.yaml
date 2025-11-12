@@ -23,7 +23,7 @@
 version: "3.3"
 services:
   video-processing-python:
-    image: pourpourr/video-processing-python:latest
+    image: caldiuoa/video-processing-python:latest
     container_name: video-processing-python
     networks:
       - cassandra    
@@ -32,36 +32,36 @@ services:
       - /app/server.py
       - --addr=0.0.0.0
       - --port=50051
-      - --db_addr=video-processing-database
+      - --db_addr=database
       - --default_video=default.mp4
       - --num_frames=10
     ports:
       - target: 50051
-        published: 50000
-  video-processing-database:
-    image:  pourpourr/cassandra:latest
-    container_name: video-processing-database
+        published: 50051
+  database:
+    image:  caldiuoa/cassandra:latest
+    container_name: db
+    networks:
+      - cassandra
     hostname: cassandra
     ports: 
-      - 9042:9042
-    networks:
-      - cassandra      
+      - 9042:9042    
     healthcheck:
         test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
         interval: 120s
         timeout: 120s
-        retries: 5   
+        retries: 5
   init-video-processing-database:
-    image: pourpourr/video-processing-init-database:latest
+    image: caldiuoa/video-processing-init-database:latest
     container_name: init-video-processing-database
     networks:
       - cassandra    
     entrypoint: 
       - /app/init-database
-      - --db_addr=video-processing-database:9042
+      - --db_addr=database:9042
     restart: "no"
   relay:
-    image: vhiveease/relay:latest
+    image: caldiuoa/relay:latest
     entrypoint:
       - /app/server
       - --addr=0.0.0.0:50000
