@@ -25,7 +25,7 @@ services:
 
   ## Function ###
   user:
-    image: pourpourr/hotel-app-user:latest
+    image: caldiuoa/hotel-app-user:latest
     container_name: user
     networks:
       - cassandra
@@ -44,8 +44,8 @@ services:
 
   ## Data base ##
   database:
-    image:  pourpourr/cassandra:latest
-    # image:  pourpourr/cassandra:riscv64
+    image:  caldiuoa/cassandra:latest
+    # image:  caldiuoa/cassandra:riscv64
     # image: cloudsuitetest/cassandra:3.11.6
     container_name: db
     networks:
@@ -63,7 +63,7 @@ services:
 
   ## Utils ##
   relay:
-    image: pourpourr/relay:latest
+    image: caldiuoa/relay:latest
     container_name: relay
 
     networks:

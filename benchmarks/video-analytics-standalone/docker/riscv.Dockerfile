@@ -22,7 +22,7 @@
 
 #---------- Init-Database -----------#
 # First stage (Builder):
-FROM  --platform=riscv64  pourpourr/go-base:1.21-riscv64 AS databaseInitBuilder
+FROM  --platform=riscv64  caldiuoa/go-base:1.21-riscv64 AS databaseInitBuilder
 WORKDIR /app/app/
 USER root
 RUN apk add --no-cache ca-certificates git
@@ -48,8 +48,8 @@ ENTRYPOINT [ "/app/init-database" ]
 #---------- PYTHON -----------#
 # First stage (Builder):
 # Install gRPC and all other dependencies
-# FROM pourpourr/me_apt_install:latest as videoAnalyticsStandalonePythonBuilder
-FROM pourpourr/python-base:debian_grpcio_tools_riscv64 as videoAnalyticsStandalonePython
+# FROM caldiuoa/me_apt_install:latest as videoAnalyticsStandalonePythonBuilder
+FROM caldiuoa/python-base:debian_grpcio_tools_riscv64 as videoAnalyticsStandalonePython
 WORKDIR /app
 RUN apt update && apt install -y python3-opencv python3-cassandra python3-torchvision python3-torch 
 COPY ./benchmarks/video-analytics-standalone/python/riscv-requirements.txt ./requirements.txt

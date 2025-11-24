@@ -25,7 +25,7 @@ services:
 
   ## Function ###
   recommendation:
-    image: pourpourr/hotel-app-recommendation:latest
+    image: caldiuoa/hotel-app-recommendation:latest
     container_name: recommendation
     networks:
       - cassandra
@@ -42,8 +42,8 @@ services:
 
 
   database:
-    # image:  pourpourr/cassandra:latest
-    image:  pourpourr/cassandra:latest
+    # image:  caldiuoa/cassandra:latest
+    image:  caldiuoa/cassandra:latest
     # image: cloudsuitetest/cassandra:3.11.6
     container_name: db
     networks:
@@ -60,7 +60,7 @@ services:
 
   ## Utils ##
   relay:
-    image: pourpourr/relay:latest
+    image: caldiuoa/relay:latest
     container_name: relay
     networks:
       - cassandra

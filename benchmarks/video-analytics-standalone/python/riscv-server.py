@@ -31,13 +31,10 @@ if os.path.exists(CACHE_DIR):
 os.makedirs(CACHE_DIR, exist_ok=True)
 
 cluster = Cluster([args.db_addr])
-print("dssdsdsd56")
 
 session = cluster.connect('video_db')
-print("dssdsdsd87")
 
 session.default_timeout = 60
-print("dssdsdsd12")
 
 model = models.squeezenet1_1(pretrained=True)
 labels_fd = open('imagenet_labels.txt', 'r')
@@ -45,7 +42,6 @@ labels = []
 for i in labels_fd:
     labels.append(i)
 labels_fd.close()
-print("dssdsdsd")
 
 def preprocess_image(image):
     transform = transforms.Compose([
@@ -131,12 +127,9 @@ class VideoAnalytics(video_analytics_standalone_pb2_grpc.VideoAnalyticsServicer)
         )
 
 def serve():
-    print("DFSFds111111111111111")
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
-    print("DFSFds")
     video_analytics_standalone_pb2_grpc.add_VideoAnalyticsServicer_to_server(VideoAnalytics(), server)
-    print("DFSFds11")
 
     address = (args.addr + ":" + args.port)
     server.add_insecure_port(address)

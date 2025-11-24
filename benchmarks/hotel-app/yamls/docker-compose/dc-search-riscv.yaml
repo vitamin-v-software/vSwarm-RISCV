@@ -25,9 +25,8 @@ services:
 
   ## Utils ##
   relay:
-    image: pourpourr/relay:latest
+    image: caldiuoa/relay:latest
     container_name: relay
-
     entrypoint:
       - /app/server
       - --addr=0.0.0.0:50000
@@ -46,7 +45,7 @@ services:
 
   ## Function ###
   search:
-    image: pourpourr/hotel-app-search:latest
+    image: caldiuoa/hotel-app-search:latest
     container_name: search
     entrypoint:
       - /app/server
@@ -66,7 +65,7 @@ services:
 
   ## Dependent geo function ###
   geo:
-    image: pourpourr/hotel-app-geo:latest
+    image: caldiuoa/hotel-app-geo:latest
     container_name: geo
     entrypoint:
       - /app/server
@@ -82,7 +81,7 @@ services:
   ## Database ##
  
   database_geo:
-    image:  pourpourr/cassandra:latest
+    image:  caldiuoa/cassandra:latest
     # image: cloudsuitetest/cassandra:3.11.6
     container_name: geo-db
     hostname: geo-cassandra
@@ -98,7 +97,7 @@ services:
 
   ## Dependent rate function ###
   rate:
-    image: pourpourr/hotel-app-rate:latest
+    image: caldiuoa/hotel-app-rate:latest
     container_name: rate
     entrypoint:
       - /app/server
@@ -120,7 +119,7 @@ services:
 
   ## Database ##
   database_rate:
-    image:  pourpourr/cassandra:latest
+    image:  caldiuoa/cassandra:latest
     # image: cloudsuitetest/cassandra:3.11.6
     container_name: rate-db
     hostname: rate-cassandra
@@ -135,7 +134,7 @@ services:
         retries: 5
   ## Memcached ##
   memcached:
-    image: pourpourr/memcached:latest
+    image: caldiuoa/memcached:latest
     container_name: mmc
     networks:
       - cassandra

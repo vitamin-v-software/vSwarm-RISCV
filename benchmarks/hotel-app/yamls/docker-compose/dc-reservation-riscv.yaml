@@ -26,7 +26,7 @@ services:
   ## Function ###
 
   reservation:
-    image: pourpourr/hotel-app-reservation:latest
+    image: caldiuoa/hotel-app-reservation:latest
     container_name: reservation
     networks:
       - cassandra
@@ -45,8 +45,8 @@ services:
 
   ## Database ##
   database:
-    # image:  pourpourr/cassandra:latest
-    image:  pourpourr/cassandra:latest
+    # image:  caldiuoa/cassandra:latest
+    image:  caldiuoa/cassandra:latest
     # image: cloudsuitetest/cassandra:3.11.6
     container_name: db
     networks:
@@ -61,7 +61,7 @@ services:
         retries: 5
   ## Memcached ##
   memcached:
-    image: pourpourr/memcached:latest
+    image: caldiuoa/memcached:latest
     container_name: mmc
     networks:
       - cassandra
@@ -76,7 +76,8 @@ services:
 
   ## Utils ##
   relay:
-    image: pourpourr/relay:latest
+    image: caldiuoa/relay:latest
+    container_name: relay
     networks:
       - cassandra    
     entrypoint:

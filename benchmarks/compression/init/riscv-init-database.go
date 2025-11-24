@@ -24,8 +24,8 @@ func main() {
 	cluster := gocql.NewCluster(*cassandraAddr)
 	cluster.Consistency = gocql.Quorum
 	cluster.Keyspace = "system" // Use the "system" keyspace to create your keyspace
-	cluster.ConnectTimeout = 20 * time.Second // ConnectTimeout set to 2 seconds
-	cluster.Timeout = 50 * time.Second        // Timeout set to 5 seconds
+	cluster.ConnectTimeout = 40 * time.Second // ConnectTimeout set to 2 seconds
+	cluster.Timeout = 60 * time.Second        // Timeout set to 5 seconds
 	var err error
 	var tmpSession *gocql.Session
 	for {
@@ -38,16 +38,21 @@ func main() {
 	}
 
 	// Create keyspace if not exists
-	err = tmpSession.Query(`
-		CREATE KEYSPACE IF NOT EXISTS compression_db
-		WITH replication = {
-			'class': 'SimpleStrategy',
-			'replication_factor': 1
-		}`).Exec()
-	if err != nil {
-		log.Fatalf("Error creating keyspace: %v", err)
+	for{
+		err = tmpSession.Query(`
+			CREATE KEYSPACE IF NOT EXISTS compression_db
+			WITH replication = {
+				'class': 'SimpleStrategy',
+				'replication_factor': 1
+			}`).Exec()	
+		if err == nil {
+			break
+		}
+		log.Printf("Retrying keyspace creation: %v", err)
+		time.Sleep(10 * time.Second)				
+		
 	}
-	tmpSession.Close()
+	defer tmpSession.Close()
 
 	// Reconnect with keyspace
 	cluster.Keyspace = "compression_db"
@@ -64,14 +69,22 @@ func main() {
 	}
 	defer session.Close()
 	log.Printf("Connected OK")
-
-	err = session.Query(`DROP TABLE IF EXISTS files`).Exec()
-	if err != nil {
-		log.Fatalf("Error deleting files table: %v", err)
+	for {
+		err = session.Query(`DROP TABLE IF EXISTS files`).Exec()
+		if err != nil {
+			log.Printf("Error deleting files table: %v", err)
+		}else{
+			break		
+		}		
 	}
-	err = session.Query(`DROP TABLE IF EXISTS chunks`).Exec()
-	if err != nil {
-		log.Fatalf("Error deleting chunks table: %v", err)
+	for{
+		err = session.Query(`DROP TABLE IF EXISTS chunks`).Exec()	
+		if err != nil {
+			log.Printf("Error deleting chunks table: %v", err)
+		}else{
+			break		
+		}					
+		time.Sleep(15*time.Second)
 	}
 	// Create tables if not exist
 	err = session.Query(`

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM  --platform=riscv64  pourpourr/go-base:1.21-riscv64  AS builder
+FROM  --platform=riscv64  caldiuoa/go-base:1.21-riscv64  AS builder
 USER root
 RUN apk add --no-cache ca-certificates git
 RUN apk add build-base

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM pourpourr/java-builder:17  as builder
+FROM caldiuoa/java-builder:17  as builder
 WORKDIR /app
 
 # COPY ["build-riscv.gradle", "gradlew", "./"]
@@ -30,7 +30,7 @@ RUN ./gradlew downloadRepos
 RUN ./gradlew installDist
 
 
-FROM pourpourr/java-runner:17
+FROM caldiuoa/java-runner:17
 
 RUN GRPC_HEALTH_PROBE_VERSION=v0.4.39 && \
     if [ $(uname -i) == "riscv64" ]; then ARCH=riscv64 ; else ARCH=amd64; fi && \
@@ -40,7 +40,7 @@ WORKDIR /app
 COPY --from=builder /app .
 
 
-# FROM pourpourr/onlineshop-adservice:riscv64GradleFinal5
+# FROM caldiuoa/onlineshop-adservice:riscv64GradleFinal5
 EXPOSE 9555
 
 ENV PORT=9555
@@ -60,7 +60,7 @@ ENTRYPOINT ["/app/build/install/hipstershop/bin/AdService"]
 # RUN chmod +x gradlew
 
 
-# FROM pourpourr/onlineshop-adservice:riscv64GradleFinal3 as builder
+# FROM caldiuoa/onlineshop-adservice:riscv64GradleFinal3 as builder
 # COPY . .
 # RUN chmod +x gradlew
 
@@ -93,7 +93,7 @@ ENTRYPOINT ["/app/build/install/hipstershop/bin/AdService"]
 # COPY --from=builder /app .
 
 
-# FROM pourpourr/onlineshop-adservice:riscv64GradleFinal5
+# FROM caldiuoa/onlineshop-adservice:riscv64GradleFinal5
 # EXPOSE 9555
 # ENTRYPOINT ["/app/build/install/hipstershop/bin/AdService"]
 

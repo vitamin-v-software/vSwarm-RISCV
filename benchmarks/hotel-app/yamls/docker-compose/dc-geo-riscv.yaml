@@ -37,7 +37,7 @@ services:
       - --db_addr=database:9042
     ports:
       - target: 8083
-        published: 50000
+        published: 8083
     depends_on:
       - database
 
@@ -64,6 +64,7 @@ services:
   ## Utils ##
   relay:
     image: caldiuoa/relay:latest
+    container_name: relay    
     entrypoint:
       - /app/server
       - --addr=0.0.0.0:50000

@@ -25,7 +25,7 @@
 # Install gRPC and all other dependencies
 
 
-FROM pourpourr/python-base:3.11-trixie as rnnServingPythonBuilder
+FROM caldiuoa/python-base:3.11-trixie as rnnServingPythonBuilder
 WORKDIR /py
 
 WORKDIR /py/resources/
@@ -44,7 +44,7 @@ ADD https://raw.githubusercontent.com/vhive-serverless/vSwarm-proto/main/proto/r
 ADD https://raw.githubusercontent.com/vhive-serverless/vSwarm-proto/main/proto/rnn_serving/rnn_serving_pb2.py ./proto/rnn_serving/
 RUN rm -r  /py/resources/
 
-FROM pourpourr/python-base:3.11-trixie-runner as rnnServingPython
+FROM caldiuoa/python-base:3.11-trixie-runner as rnnServingPython
 WORKDIR /app
 COPY --from=rnnServingPythonBuilder /usr/lib/riscv64-linux-gnu/libatomic.so* /usr/lib/riscv64-linux-gnu/
 COPY --from=rnnServingPythonBuilder /usr/lib/riscv64-linux-gnu/libgomp.so* /usr/lib/riscv64-linux-gnu/

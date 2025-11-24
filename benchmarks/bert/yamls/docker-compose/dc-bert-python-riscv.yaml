@@ -3,14 +3,17 @@ services:
   bert-python:
     image: caldiuoa/bert-python:latest
     container_name: bert-python
-    working_dir: /workspace
+    # working_dir: /workspace
     entrypoint:
       - python3
-      - python/server.py
+      - server.py
       - --addr=0.0.0.0
       - --port=50051
+      - --mlperf_conf=./user.conf
+      - --user_conf=./user.conf
     ports:
       - target: 50051
+        published: 50051
     # deploy:
     #   resources:
     #     reservations:

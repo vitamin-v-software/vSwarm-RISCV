@@ -14,8 +14,14 @@ gptj-python-riscv-image: riscv.Dockerfile python/server.py
 clean:
 	@rm -rf ${BUILD_DIR}
 
-push-%: %-image
-	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/$(subst push-,,$@):latest
+push-gptj-python-riscv: gptj-python-riscv-image
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/gptj-python:latest
+
+push-gptj-python-image: gptj-python-image
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/gptj-python:latest	
+
+# push-%: %-image
+# 	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/$(subst push-,,$@):latest
 
 pull-%:
 	docker pull docker.io/$(DOCKER_HUB_ACCOUNT)/$(subst pull-,,$@):latest

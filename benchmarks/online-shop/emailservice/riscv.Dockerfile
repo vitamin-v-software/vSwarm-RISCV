@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM --platform=riscv64   pourpourr/python-base:3.10-grpc-only-1.71 as builder
+FROM --platform=riscv64   caldiuoa/python-base:3.10-grpc-only-1.71 as builder
 WORKDIR /py
 # COPY requirements.txt .
 COPY riscv-requirements.txt requirements.txt
@@ -23,7 +23,7 @@ RUN rm req* Dockerfile
 RUN apt-get update && apt-get install -y libc-ares2 libabsl-dev  libprotobuf23 
 
 
-FROM --platform=riscv64 pourpourr/python-base:3.10-runner as release
+FROM --platform=riscv64 caldiuoa/python-base:3.10-runner as release
 COPY --from=builder /root/.local /root/.local
 COPY --from=builder /py /email_server
 COPY --from=builder /usr/lib/riscv64-linux-gnu/libatomic.so* /usr/lib/riscv64-linux-gnu/

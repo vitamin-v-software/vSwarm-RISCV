@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM pourpourr/noble-base:latest as builder
+FROM caldiuoa/noble-base:latest as builder
 RUN apt-get update && apt-get install -y wget nano git cmake g++ make autoconf libtool pkg-config build-essential protobuf-compiler
 
 WORKDIR /grpcPlugin
@@ -66,7 +66,7 @@ RUN dotnet publish cartservice.csproj \
 
 
 
-FROM pourpourr/noble-base:latest
+FROM caldiuoa/noble-base:latest
 
 # Only needed for globalization (if your app uses it)
 RUN apt-get update && apt-get install -y libicu-dev && rm -rf /var/lib/apt/lists/*

@@ -23,7 +23,7 @@
 version: "3.3"
 services:
   rnn-serving-python:
-    image: pourpourr/rnn-serving-python:latest
+    image: caldiuoa/rnn-serving-python:latest
     container_name: rnn-serving-python
     entrypoint:
       - python3
@@ -35,7 +35,7 @@ services:
     ports:
       - target: 50051
   relay:
-    image: pourpourr/relay:latest
+    image: caldiuoa/relay:latest
     entrypoint:
       - /app/server
       - --addr=0.0.0.0:50000

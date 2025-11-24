@@ -95,6 +95,7 @@ RUN cd /tmp/ \
     && git checkout feature/gptj \
     && mv /tmp/vSwarm-proto/proto/gptj/* /workspace/python
 
-RUN python3 main_process.py    
+RUN python3 main_process.py --model-path=EleutherAI/gpt-neo-125M --dataset-path=./data/cnn_eval.json --mlperf_conf=./config/mlperf.conf --user_conf=./config/user.conf  
 ENTRYPOINT [ "python3", "server.py",  "--dataset-path=./data/cnn_eval.json", "--mlperf_conf=./config/mlperf.conf", "--user_conf=./config/user.conf"]
 
+# python3 server.py --dataset-path=./data/cnn_eval.json --mlperf_conf=./config/mlperf.conf --user_conf=./config/user.conf

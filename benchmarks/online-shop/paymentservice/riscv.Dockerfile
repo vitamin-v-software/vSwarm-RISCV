@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM pourpourr/node-base:jammy-builder AS base
+FROM caldiuoa/node-base:jammy-builder AS base
 
 FROM base as builder
 
@@ -29,7 +29,7 @@ COPY package*.json ./
 RUN npm install grpc-health-check
 RUN npm install --only=production
 
-FROM pourpourr/node-base:alpine-runner AS release
+FROM caldiuoa/node-base:alpine-runner AS release
 
 
 

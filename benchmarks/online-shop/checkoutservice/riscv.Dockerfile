@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM  --platform=riscv64  pourpourr/go-base:1.21-riscv64 as builder
+FROM  --platform=riscv64  caldiuoa/go-base:1.21-riscv64 as builder
 USER root
 RUN apk add --no-cache ca-certificates git
 RUN apk add build-base
@@ -37,7 +37,7 @@ RUN CGO_ENABLED=0 GOARCH=riscv64 GOOS=linux go build -a -ldflags '-extldflags "-
 #     if [ $(uname -i) == "aarch64" ]; then ARCH=arm64 ; else ARCH=amd64; fi && \
 #     wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-${ARCH} && \
 #     chmod +x /bin/grpc_health_probe
-# FROM  --platform=riscv64  pourpourr/go-base:1.21-riscv64 as release
+# FROM  --platform=riscv64  caldiuoa/go-base:1.21-riscv64 as release
 FROM  scratch as release
 
 WORKDIR /src

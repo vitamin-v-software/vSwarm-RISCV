@@ -25,7 +25,7 @@ services:
 
   ## Function ###
   profile:
-    image: pourpourr/hotel-app-profile:latest
+    image: caldiuoa/hotel-app-profile:latest
     container_name: profile
     networks:
       - cassandra
@@ -37,7 +37,7 @@ services:
       - --memcached_addr=memcached:11211
     ports:
       - target: 8083
-        published: 50000
+        published: 8083
     depends_on:
       - database
       - memcached
@@ -45,8 +45,8 @@ services:
 
   ## Database ##
   database:
-    # image:  pourpourr/cassandra:latest
-    image:  pourpourr/cassandra:latest
+    # image:  caldiuoa/cassandra:latest
+    image:  caldiuoa/cassandra:latest
     # image: cloudsuitetest/cassandra:3.11.6
     container_name: db
     networks:
@@ -61,7 +61,7 @@ services:
         retries: 5
   ## Memcached ##
   memcached:
-    image: pourpourr/memcached:latest
+    image: caldiuoa/memcached:latest
     container_name: mmc
     networks:
       - cassandra
@@ -76,7 +76,8 @@ services:
 
   ## Utils ##
   relay:
-    image: pourpourr/relay:latest
+    image: caldiuoa/relay:latest
+    container_name: relay    
     networks:
       - cassandra    
     entrypoint:

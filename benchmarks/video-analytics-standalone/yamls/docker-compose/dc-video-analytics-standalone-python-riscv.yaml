@@ -23,7 +23,7 @@
 version: "3.3"
 services:
   video-analytics-standalone-python:
-    image: pourpourr/video-analytics-standalone-python:latest
+    image: caldiuoa/video-analytics-standalone-python:latest
     container_name: video-analytics-standalone-python
     networks:
       - cassandra    
@@ -32,45 +32,44 @@ services:
       - /app/server.py
       - --addr=0.0.0.0
       - --port=50051
-      - --db_addr=video-analytics-standalone-database
+      - --db_addr=database
       - --default_video=default.mp4
       - --num_frames=10
     ports:
       - target: 50051
-        published: 50000
+        published: 50051
     # depends_on:
       # - video-analytics-standalone-database
       # - init-video-analytics-standalone-database
 
 
-  video-analytics-standalone-database:
-    image:  pourpourr/cassandra:latest
-    # image: cloudsuitetest/cassandra:3.11.6
-    container_name: video-analytics-standalone-database
+  database:
+    image:  caldiuoa/cassandra:latest
+    container_name: db
+    networks:
+      - cassandra
     hostname: cassandra
     ports: 
-      - 9042:9042
-    networks:
-      - cassandra      
+      - 9042:9042    
     healthcheck:
         test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
         interval: 120s
         timeout: 120s
-        retries: 5    
+        retries: 5 
 
   init-video-analytics-standalone-database:
-    image: pourpourr/video-analytics-standalone-init-database:latest
+    image: caldiuoa/video-analytics-standalone-init-database:latest
     container_name: init-video-analytics-standalone-database
     networks:
       - cassandra    
     entrypoint: 
       - /app/init-database
-      - --db_addr=video-analytics-standalone-database:9042
+      - --db_addr=database:9042
     restart: "no"
     # depends_on:
     #   - video-analytics-standalone-database
   relay:
-    image: pourpourr/relay:latest
+    image: caldiuoa/relay:latest
     networks:
       - cassandra    
     entrypoint:
@@ -79,7 +78,7 @@ services:
       - --function-endpoint-url=video-analytics-standalone-python
       - --function-endpoint-port=50051
       - --function-name=video-analytics-standalone-python
-      - --input=video1.mp4
+      - --value=video1.mp4
     ports:
         - published: 50000
           target: 50000

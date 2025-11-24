@@ -127,8 +127,15 @@ launch_docker:
 clean:
 	@rm -rf ${BUILD_DIR}
 
-push-%: %-image
-	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/$(subst push-,,$@):latest
+# push
+push-bert-python-riscv: bert-python-riscv-image
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/bert-python:latest
+
+push-bert-python-image: bert-python-image
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/bert-python:latest
+
+# push-%: %-image
+# 	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/$(subst push-,,$@):latest
 
 pull-%:
 	docker pull docker.io/$(DOCKER_HUB_ACCOUNT)/$(subst pull-,,$@):latest

@@ -2,15 +2,18 @@ services:
   gptj-python:
     image: caldiuoa/gptj-python:latest
     container_name: gptj-python
-    working_dir: /workspace
+    # working_dir: /workspace
     entrypoint:
       - python3
-      - python/server.py
+      - server.py
       - --addr=0.0.0.0
       - --port=50051
-      - --dataset-path=python/data/cnn_eval.json
-      - --mlperf_conf=python/config/mlperf.conf
-      - --user_conf=python/config/user.conf
+      - --dataset-path=./data/cnn_eval.json
+      - --mlperf_conf=./config/mlperf.conf
+      - --user_conf=./config/user.conf
+      # - --dataset-path=python/data/cnn_eval.json
+      # - --mlperf_conf=python/config/mlperf.conf
+      # - --user_conf=python/config/user.conf
     ports:
       - 50051:50051
 
@@ -25,3 +28,7 @@ services:
     ports:
         - published: 50000
           target: 50000
+
+
+#  --dataset-path=python/data/cnn_eval.json --mlperf_conf=python/config/mlperf.conf --user_conf=python/config/user.conf
+# python3 main_process.py --port=50052 --dataset-path=./data/cnn_eval.json --mlperf_conf=./config/mlperf.conf --user_conf=./config/user.conf

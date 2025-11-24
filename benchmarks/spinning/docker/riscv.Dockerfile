@@ -24,7 +24,7 @@
 # First stage (Builder):
     # FROM alpinelinux/golang:latest-riscv64  AS builder
 
-FROM  --platform=riscv64  pourpourr/go-base:1.21-riscv64  AS spinningGoBuilder
+FROM  --platform=riscv64  caldiuoa/go-base:1.21-riscv64  AS spinningGoBuilder
 WORKDIR /app/app/
 USER root
 RUN  apk add git ca-certificates

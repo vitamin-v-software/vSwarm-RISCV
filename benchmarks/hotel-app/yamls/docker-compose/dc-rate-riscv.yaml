@@ -25,7 +25,7 @@ services:
 
   ## Function ###
   rate:
-    image: pourpourr/hotel-app-rate:latest
+    image: caldiuoa/hotel-app-rate:latest
     container_name: rate
     networks:
       - cassandra
@@ -44,7 +44,8 @@ services:
 
   ## Utils ##
   relay:
-    image: pourpourr/relay:latest
+    image: caldiuoa/relay:latest
+    container_name: relay    
     networks:
       - cassandra    
     entrypoint:
@@ -59,8 +60,8 @@ services:
           target: 50000
 
   database:
-    # image:  pourpourr/cassandra:latest
-    image:  pourpourr/cassandra:latest
+    # image:  caldiuoa/cassandra:latest
+    image:  caldiuoa/cassandra:latest
     # image: cloudsuitetest/cassandra:3.11.6
     container_name: db
     networks:
@@ -75,7 +76,7 @@ services:
         retries: 5
   ## Memcached ##
   memcached:
-    image: pourpourr/memcached:latest
+    image: caldiuoa/memcached:latest
     container_name: mmc
     networks:
       - cassandra

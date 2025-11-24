@@ -22,7 +22,7 @@
 
 #---------- Init-Database -----------#
 # First stage (Builder):
-FROM  --platform=riscv64  pourpourr/go-base:1.21-riscv64 AS databaseInitBuilder
+FROM  --platform=riscv64  caldiuoa/go-base:1.21-riscv64 AS databaseInitBuilder
 WORKDIR /app/app/
 USER root
 RUN apk add --no-cache ca-certificates git
@@ -48,7 +48,7 @@ ENTRYPOINT [ "/app/init-database" ]
 #---------- PYTHON -----------#
 # First stage (Builder):
 # Install gRPC and all other dependencies
-FROM pourpourr/python-base:debian_grpc_only_riscv64  as compressionPython
+FROM caldiuoa/python-base:debian_grpc_only_riscv64  as compressionPython
 WORKDIR /app
 COPY ./benchmarks/compression/python/riscv-requirements.txt ./requirements.txt
 RUN apt update && apt install -y  python3-cassandra

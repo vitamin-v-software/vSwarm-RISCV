@@ -2,7 +2,7 @@ version: "3.9"
 services:
 
   checkoutservice:
-    image: pourpourr/onlineshop-checkoutservice:latest
+    image: caldiuoa/onlineshop-checkoutservice:latest
     container_name: 'checkoutservice'
     build:
       context: ./../../checkoutservice/
@@ -20,7 +20,6 @@ services:
       - DISABLE_TRACING=true
     ports:
     - target: 5050
-      published: 50000
     depends_on:
       - shippingservice
       - productcatalogservice
@@ -30,7 +29,7 @@ services:
       - paymentservice
 
   shippingservice:
-    image: pourpourr/onlineshop-shippingservice:riscv64
+    image: caldiuoa/onlineshop-shippingservice:latest
     container_name: 'shippingservice'
     build:
       context: ./../../shippingservice/
@@ -44,7 +43,7 @@ services:
     - target: 50051
 
   productcatalogservice:
-    image: pourpourr/onlineshop-productcatalogservice:riscv64
+    image: caldiuoa/onlineshop-productcatalogservice:latest
     container_name: 'productcatalogservice'
     build:
       context: ./../../productcatalogservice/
@@ -58,13 +57,13 @@ services:
     - target: 3550
 
   cartservice:
-    image: pourpourr/onlineshop-cartservice:riscv64
+    image: caldiuoa/onlineshop-cartservice:latest
     container_name: 'cartservice'
     build:
       context: ./../../cartservice/
       dockerfile: ./Dockerfile
     environment:
-      # - PORT=9555
+      - REDIS_ADDR=redis:6379
       - DISABLE_PROFILER=true
       - DISABLE_DEBUGGER=true
       - DISABLE_TRACING=true
@@ -73,7 +72,7 @@ services:
 
 
   currencyservice:
-    image: pourpourr/onlineshop-currencyservice:riscv64
+    image: caldiuoa/onlineshop-currencyservice:latest
     container_name: 'currencyservice'
     build:
       context: ./../../currencyservice/
@@ -87,7 +86,7 @@ services:
     - target: 7000
 
   emailservice:
-    image: pourpourr/onlineshop-emailservice:riscv64
+    image: caldiuoa/onlineshop-emailservice:latest
     container_name: 'emailservice'
     build:
       context: ./../../emailservice/
@@ -100,7 +99,7 @@ services:
     - target: 8080
 
   paymentservice:
-    image: pourpourr/onlineshop-paymentservice:riscv64
+    image: caldiuoa/onlineshop-paymentservice:latest
     container_name: 'paymentservice'
     build:
       context: ./../../paymentservice/
@@ -112,17 +111,22 @@ services:
       - DISABLE_TRACING=true
     ports:
     - target: 50051
+    
+  redis:
+    image: caldiuoa/redis:latest
+    ports:
+    - target: 6379
 
-  # relay:
-  #   image: pourpourr/relay:latest
-  #   entrypoint:
-  #     - /app/server
-  #     - --addr=0.0.0.0:50000
-  #     - --function-endpoint-url=checkoutservice
-  #     - --function-endpoint-port=5050
-  #     - --function-name=checkoutservice
-  #     - --generator=unique
-  #     - --value=12345
-  #   ports:
-  #     - published: 50000
-  #       target: 50000
+  relay:
+    image: caldiuoa/relay:latest
+    entrypoint:
+      - /app/server
+      - --addr=0.0.0.0:50000
+      - --function-endpoint-url=checkoutservice
+      - --function-endpoint-port=5050
+      - --function-name=checkoutservice
+      - --generator=unique
+      - --value=12345
+    ports:
+      - published: 50000
+        target: 50000

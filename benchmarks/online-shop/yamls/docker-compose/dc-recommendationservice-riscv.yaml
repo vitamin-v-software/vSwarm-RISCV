@@ -2,12 +2,11 @@ version: "3.9"
 services:
 
   recommendationservice:
-    # image: vhiveease/onlineshop-recommendationservice:latest
-    image: pourpourr/onlineshop-recommendationservice:latest
+    image: caldiuoa/onlineshop-recommendationservice:latest
     container_name: 'recommendationservice'
-    # build:
-    #   context: ./../../recommendationservice/
-    #   dockerfile: ./Dockerfile
+    build:
+      context: ./../../recommendationservice/
+      dockerfile: ./Dockerfile
     environment:
       - PORT=8080
       - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
@@ -20,11 +19,11 @@ services:
       - productcatalogservice
 
   productcatalogservice:
-    image: pourpourr/onlineshop-productcatalogservice:latest
+    image: caldiuoa/onlineshop-productcatalogservice:latest
     container_name: 'productcatalogservice'
-    # build:
-    #   context: ./../../productcatalogservice/
-    #   dockerfile: ./Dockerfile
+    build:
+      context: ./../../productcatalogservice/
+      dockerfile: ./Dockerfile
     environment:
       - PORT=3550
       - DISABLE_PROFILER=true
@@ -34,7 +33,7 @@ services:
     - target: 3550
 
   relay:
-    image: pourpourr/relay:latest
+    image: caldiuoa/relay:latest
     entrypoint:
       - /app/server
       - --addr=0.0.0.0:50000

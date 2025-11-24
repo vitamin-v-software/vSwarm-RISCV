@@ -23,7 +23,7 @@
 version: "3.3"
 services:
   image-rotate-python:
-    image: pourpourr/image-rotate-python:latest
+    image: caldiuoa/image-rotate-python:latest
     container_name: image-rotate-python
     networks:
       - cassandra      
@@ -32,45 +32,39 @@ services:
       - /app/server.py
       - --addr=0.0.0.0
       - --port=50051
-      - --db_addr=image-rotate-database
+      - --db_addr=database
     ports:
       - target: 50051
-        published: 50000
+        published: 50051
 
-
-  # image-rotate-database:
-  #   image: vhiveease/mongodb
-  #   container_name: image-rotate-database
-    
-  image-rotate-database:
-    image:  pourpourr/cassandra:latest
-    # image: cloudsuitetest/cassandra:3.11.6
-    container_name: image-rotate-database
+  database:
+    image:  caldiuoa/cassandra:latest
+    container_name: db
+    networks:
+      - cassandra
     hostname: cassandra
     ports: 
-      - 9042:9042
-    networks:
-      - cassandra      
+      - 9042:9042    
     healthcheck:
         test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
         interval: 120s
         timeout: 120s
-        retries: 5       
+        retries: 5   
 
   init-image-rotate-database:
-    image: pourpourr/image-rotate-init-database:latest
+    image: caldiuoa/image-rotate-init-database:latest
     container_name: init-image-rotate-database
     networks:
       - cassandra  
     entrypoint: 
       - /app/init-database
-      - --db_addr=image-rotate-database:9042
+      - --db_addr=database:9042
     restart: "no"
     # depends_on:
     #   - image-rotate-database
 
   relay:
-    image: vhiveease/relay-latency:latest
+    image: caldiuoa/relay:latest
     entrypoint:
       - /app/server
       - --addr=0.0.0.0:50000
@@ -81,8 +75,7 @@ services:
     ports:
         - published: 50000
           target: 50000
-    depends_on:
-      - image-rotate-python
+
 
 
 networks:

@@ -23,7 +23,7 @@
 version: "3.3"
 services:
   compression-python:
-    image: pourpourr/compression-python:latest
+    image: caldiuoa/compression-python:latest
     container_name: compression-python
     networks:
       - cassandra    
@@ -31,21 +31,21 @@ services:
       - python3
       - /app/server.py
       - --addr=0.0.0.0
-      - --db_addr=compression-database
+      - --db_addr=database
       - --port=50051
     ports:
       - target: 50051
-        published: 50000
+        published: 50051
     
 
-  compression-database:
-    image:  pourpourr/cassandra:latest
-    container_name: compression-database
+  database:
+    image:  caldiuoa/cassandra:latest
+    container_name: db
+    networks:
+      - cassandra
     hostname: cassandra
     ports: 
-      - 9042:9042
-    networks:
-      - cassandra      
+      - 9042:9042    
     healthcheck:
         test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
         interval: 120s
@@ -53,17 +53,17 @@ services:
         retries: 5
 
   init-compression-standalone-database:
-    image: pourpourr/compression-init-database:latest
+    image: caldiuoa/compression-init-database:latest
     container_name: init-compression-database
     networks:
       - cassandra    
     entrypoint: 
       - /app/init-database
-      - --db_addr=compression-database:9042
+      - --db_addr=database:9042
     restart: "no"
 
   relay:
-    image: pourpourr/relay:latest
+    image: caldiuoa/relay:latest
     networks:
       - cassandra    
     entrypoint:
@@ -80,3 +80,4 @@ services:
 networks:
     cassandra:
       driver: bridge          
+

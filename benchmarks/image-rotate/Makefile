@@ -22,7 +22,7 @@
 
 ROOT = ../../
 ARCH := $(shell uname -m)
-
+DOCKER_HUB_ACCOUNT= caldiuoa
 ifeq ($(ARCH),riscv64)
     DOCKERFILE := docker/riscv.Dockerfile
 else
@@ -33,33 +33,33 @@ all-image: image-rotate-python image-rotate-go init-database
 
 image-rotate-python: $(DOCKERFILE) python/server.py python/requirements.txt images/default.jpg
 	DOCKER_BUILDKIT=1 docker build \
-	--tag pourpourr/image-rotate-python:latest \
+	--tag $(DOCKER_HUB_ACCOUNT)/image-rotate-python:latest \
 	--target imageRotatePython \
 	-f $(DOCKERFILE) \
 	$(ROOT) --load
 
 image-rotate-go: $(DOCKERFILE) go/server.go go/go.mod go/go.sum images/default.jpg
 	DOCKER_BUILDKIT=1 docker build \
-	--tag pourpourr/image-rotate-go:latest \
+	--tag $(DOCKER_HUB_ACCOUNT)/image-rotate-go:latest \
         --target imageRotateGo \
         -f $(DOCKERFILE) \
         $(ROOT) --load
 
 init-database: $(DOCKERFILE) init/init-database.go images/default.jpg
 	DOCKER_BUILDKIT=1 docker build \
-	--tag pourpourr/image-rotate-init-database:latest \
+	--tag $(DOCKER_HUB_ACCOUNT)/image-rotate-init-database:latest \
 	--target databaseInit \
 	-f $(DOCKERFILE) \
 	$(ROOT) --load
 
 ## Push images
 push:
-	docker push docker.io/pourpourr/image-rotate-init-database:latest
-	docker push docker.io/pourpourr/image-rotate-python:latest 
-	docker push docker.io/pourpourr/image-rotate-go:latest 
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/image-rotate-init-database:latest
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/image-rotate-python:latest 
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/image-rotate-go:latest 
 
 ## Pull images from docker hub
 pull:
-	docker pull docker.io/pourpourr/image-rotate-python:latest
-	docker pull docker.io/pourpourr/image-rotate-go:latest
-	docker pull docker.io/pourpourr/image-rotate-init-database:latest
+	docker pull docker.io/$(DOCKER_HUB_ACCOUNT)/image-rotate-python:latest
+	docker pull docker.io/$(DOCKER_HUB_ACCOUNT)/image-rotate-go:latest
+	docker pull docker.io/$(DOCKER_HUB_ACCOUNT)/image-rotate-init-database:latest

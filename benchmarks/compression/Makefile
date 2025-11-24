@@ -29,6 +29,7 @@ else
     DOCKERFILE := Dockerfile
 endif
 
+DOCKER_HUB_ACCOUNT=caldiuoa
 FUNCTIONS = compression-python init-database
 ALL_IMAGES = $(FUNCTIONS)
 
@@ -36,24 +37,24 @@ all-image: $(ALL_IMAGES)
 
 compression-python: $(DOCKERFILE) python/server.py python/requirements.txt files/metamorphosis.txt
 	DOCKER_BUILDKIT=1 docker build \
-	--tag pourpourr/compression-python:latest \
+	--tag $(DOCKER_HUB_ACCOUNT)/compression-python:latest \
 	--target compressionPython \
 	-f ./$(DOCKERFILE) \
 	$(ROOT) --load
 
 init-database: $(DOCKERFILE) init/init-database.go files/metamorphosis.txt
 	DOCKER_BUILDKIT=1 docker build \
-	--tag pourpourr/compression-init-database:latest \
+	--tag $(DOCKER_HUB_ACCOUNT)/compression-init-database:latest \
 	--target databaseInit \
 	-f ./$(DOCKERFILE) \
 	$(ROOT) --load
 
 ## Push images
 push:
-	docker push docker.io/pourpourr/compression-python:latest 
-	docker push docker.io/pourpourr/compression-init-database:latest
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/compression-python:latest 
+	docker push docker.io/$(DOCKER_HUB_ACCOUNT)/compression-init-database:latest
 
 ## Pull images from docker hub
 pull:
-	docker pull docker.io/pourpourr/compression-python:latest
-	docker pull docker.io/pourpourr/compression-init-database:latest
+	docker pull docker.io/$(DOCKER_HUB_ACCOUNT)/compression-python:latest
+	docker pull docker.io/$(DOCKER_HUB_ACCOUNT)/compression-init-database:latest
