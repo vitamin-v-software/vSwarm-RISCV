@@ -8,6 +8,7 @@ import shutil
 # from pymongo import MongoClient
 # import gridfs
 from cassandra.cluster import Cluster
+import logging
 
 from cassandra import DriverException
 
@@ -35,7 +36,11 @@ if os.path.exists(CACHE_DIR):
 
 os.makedirs(CACHE_DIR, exist_ok=True)
 
-cluster = Cluster([args.db_addr])
+cluster = Cluster([args.db_addr]  ,  protocol_version=5,
+    connect_timeout=60,
+    control_connection_timeout=60,
+    idle_heartbeat_interval=10
+)
 
 session = cluster.connect('video_processing_db')
 
@@ -133,9 +138,10 @@ def serve():
     video_processing_pb2_grpc.add_VideoProcessingServicer_to_server(VideoProcessing(), server)
     address = (args.addr + ":" + args.port)
     server.add_insecure_port(address)
-    print("Start VideoProcessing-python server. Addr: " + address)
+    logging.info("Start VideoProcessing-python server. Addr: " + address)
     server.start()
     server.wait_for_termination()
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     serve()

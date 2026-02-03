@@ -8,6 +8,7 @@ import shutil
 import grpc
 import argparse
 import os
+import logging
 from proto.image_rotate import image_rotate_pb2
 import image_rotate_pb2_grpc
 
@@ -27,7 +28,12 @@ if os.path.exists(CACHE_DIR):
 
 os.makedirs(CACHE_DIR, exist_ok=True)
 
-cluster = Cluster([args.db_addr])
+cluster = Cluster([args.db_addr]  ,  protocol_version=5,
+    connect_timeout=60,
+    control_connection_timeout=60,
+    idle_heartbeat_interval=10
+)
+
 
 session = cluster.connect('image_rotate_db')
 
@@ -127,9 +133,10 @@ def serve():
     image_rotate_pb2_grpc.add_ImageRotateServicer_to_server(ImageRotate(), server)
     address = (args.addr + ":" + args.port)
     server.add_insecure_port(address)
-    print("Start ImageRotate-python server. Addr: " + address)
+    logging.info("Start ImageRotate-python server. Addr: " + address)
     server.start()
     server.wait_for_termination()
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     serve()

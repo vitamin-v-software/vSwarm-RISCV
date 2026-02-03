@@ -7,7 +7,7 @@ import torch
 import rnn
 import string
 import random
-
+import logging
 # import tracing
 
 import grpc
@@ -77,9 +77,10 @@ def serve():
     rnn_serving_pb2_grpc.add_RNNServingServicer_to_server(RNNServing(), server)
     address = (args.addr + ":" + args.port)
     server.add_insecure_port(address)
-    print("Start RNNServing-python server. Addr: " + address)
+    logging.info("Start RNNServing-python server. Addr: " + address)
     server.start()
     server.wait_for_termination()
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     serve()

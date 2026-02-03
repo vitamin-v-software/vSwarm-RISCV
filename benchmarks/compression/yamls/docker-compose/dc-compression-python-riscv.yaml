@@ -79,5 +79,5 @@ services:
 
 networks:
     cassandra:
-      driver: bridge          
+      driver: bridge
 

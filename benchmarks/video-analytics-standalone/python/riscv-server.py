@@ -11,6 +11,7 @@ import torch
 import torchvision.models as models
 from torchvision import transforms
 import cv2
+import logging
 
 from proto.video_analytics_standalone import video_analytics_standalone_pb2
 import video_analytics_standalone_pb2_grpc
@@ -30,7 +31,11 @@ if os.path.exists(CACHE_DIR):
 
 os.makedirs(CACHE_DIR, exist_ok=True)
 
-cluster = Cluster([args.db_addr])
+cluster = Cluster([args.db_addr], protocol_version=5,
+    connect_timeout=60,
+    control_connection_timeout=60,
+    idle_heartbeat_interval=10
+)
 
 session = cluster.connect('video_db')
 
@@ -133,9 +138,10 @@ def serve():
 
     address = (args.addr + ":" + args.port)
     server.add_insecure_port(address)
-    print("Start VideoAnalyticsStandalone-python server. Addr: " + address)
+    logging.info("Start VideoAnalyticsStandalone-python server. Addr: " + address)
     server.start()
     server.wait_for_termination()
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)    
     serve()
