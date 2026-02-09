@@ -1,5 +1,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+# vSwarm-RISCV Serverless Benchmarking Suite
+
+This fork of the original repository contains a port of the benchmark suite to the RISC-V ISA. The project was initially developed as part of an undergraduate thesis and was later continued within the framework of the Vitamin-V project (Horizon Europe 101093062) 2023-2025.
+An effort was made to remain as close as possible to the structure and implementation of the original repository in order to preserve consistency and comparability.
+We have added the [riscv-perf-client](./tools/riscv-perf-client), which enables manual compilation of the client responsible for sending requests to the containers. In addition, we provide two Python scripts: one for executing the functions that were ported, and another for parsing the results and generating a tab-separated .txt file suitable for direct import into spreadsheet software.
+
 
 # vSwarm - Serverless Benchmarking Suite
 
