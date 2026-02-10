@@ -4,8 +4,9 @@
 This fork of the original repository contains a port of the benchmark suite to the RISC-V ISA. This work has been developed within the framework of the Vitamin-V project (Horizon Europe 101093062) 2023-2025. Our goal was to remain as close as possible to the structure and implementation of the original repository in order to preserve consistency and comparability. In addition, we provide the riscv-perf-client, which enables manual compilation of the client responsible for sending requests to the containers. Furthermore, we also provide two Python scripts: one for executing the functions that were ported, and another for parsing the results and generating a tab-separated .txt file suitable for direct import into spreadsheet software.
 
 If you use this repo, please also cite our IISWC 2025 short paper:
-'''
-@INPROCEEDINGS {Pournaras:2025,
+
+```
+@inproceedings {Pournaras:2025,
 author = { Pournaras, Georgios and Karakostas, Vasileios and Papadimitriou, George and Gizopoulos, Dimitris },
 booktitle = { 2025 IEEE International Symposium on Workload Characterization (IISWC) },
 title = {{ Benchmarking Support for RISC-V CPUs in Serverless Computing }},
@@ -19,7 +20,9 @@ url = {https://doi.ieeecomputersociety.org/10.1109/IISWC66894.2025.00050},
 publisher = {IEEE Computer Society},
 address = {Los Alamitos, CA, USA},
 month =Oct}
-'''
+```
+
+
 
 # vSwarm - Serverless Benchmarking Suite
 
